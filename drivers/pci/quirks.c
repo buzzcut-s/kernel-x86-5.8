@@ -2330,27 +2330,6 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f1, quirk_disable_aspm_l0s);
 DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f4, quirk_disable_aspm_l0s);
 DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1508, quirk_disable_aspm_l0s);
 
-static void quirk_enable_aspm_l1(struct pci_dev *dev)
-{
-	struct pci_dev *bridge = pci_upstream_bridge(dev);
-	u16 lnkctl;
-
-	pci_info(dev, "Enabling L1\n");
-	pcie_capability_read_word(dev, PCI_EXP_LNKCTL, &lnkctl);
-	if (!(lnkctl & PCI_EXP_LNKCTL_ASPM_L1))
-		pcie_capability_write_word(dev, PCI_EXP_LNKCTL,
-					   lnkctl | PCI_EXP_LNKCTL_ASPM_L1);
-
-	if (!bridge)
-		return;
-
-	pcie_capability_read_word(bridge, PCI_EXP_LNKCTL, &lnkctl);
-	if (!(lnkctl & PCI_EXP_LNKCTL_ASPM_L1))
-		pcie_capability_write_word(bridge, PCI_EXP_LNKCTL,
-					   lnkctl | PCI_EXP_LNKCTL_ASPM_L1);
-}
-DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_TI, 0x8240, quirk_enable_aspm_l1);
-
 static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
 {
 	pci_info(dev, "Disabling ASPM L0s/L1\n");
