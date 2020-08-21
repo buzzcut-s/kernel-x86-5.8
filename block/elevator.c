@@ -95,8 +95,8 @@ static inline bool elv_support_features(unsigned int elv_features,
  * @name: Elevator name to test
  * @required_features: Features that the elevator must provide
  *
- * Return true is the elevator @e name matches @name and if @e provides all the
- * the feratures spcified by @required_features.
+ * Return true if the elevator @e name matches @name and if @e provides all
+ * the features specified by @required_features.
  */
 static bool elevator_match(const struct elevator_type *e, const char *name,
 			   unsigned int required_features)
@@ -623,15 +623,19 @@ static inline bool elv_support_iosched(struct request_queue *q)
 }
 
 /*
- * For single queue devices, default to using mq-deadline. If we have multiple
- * queues or mq-deadline is not available, default to "none".
+ * For single queue devices, default to using bfq. If we have multiple
+ * queues or bfq is not available, default to "none".
  */
 static struct elevator_type *elevator_get_default(struct request_queue *q)
 {
 	if (q->nr_hw_queues != 1)
 		return NULL;
 
-	return elevator_get(q, "mq-deadline", false);
+#if defined(CONFIG_MQ_IOSCHED_DEADLINE_NODEFAULT)
+	return elevator_get(q, "mq-deadline-nodefault", false);
+#else
+	return elevator_get(q, "bfq", false);
+#endif
 }
 
 /*
