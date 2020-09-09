@@ -774,6 +774,12 @@ config SCHED_BMQ
 	  responsiveness on the desktop and solid scalability on normal
 	  hardware and commodity servers.
 
+config SCHED_PDS
+	bool "PDS CPU scheduler"
+	help
+	  The Priority and Deadline based Skip list multiple queue CPU
+	  Scheduler.
+
 endchoice
 
 endif
@@ -781,7 +787,7 @@ endif
 config UCLAMP_TASK
 	bool "Enable utilization clamping for RT/FAIR tasks"
 	depends on CPU_FREQ_GOV_SCHEDUTIL
-	depends on !SCHED_BMQ
+	depends on !SCHED_ALT
 	help
 	  This feature enables the scheduler to track the clamped utilization
 	  of each CPU based on RUNNABLE tasks scheduled on that CPU.
@@ -867,7 +873,7 @@ config NUMA_BALANCING
 	depends on ARCH_SUPPORTS_NUMA_BALANCING
 	depends on !ARCH_WANT_NUMA_VARIABLE_LOCALITY
 	depends on SMP && NUMA && MIGRATION
-	depends on !SCHED_BMQ
+	depends on !SCHED_ALT
 	help
 	  This option adds support for automatic NUMA aware memory/task placement.
 	  The mechanism is quite primitive and is based on migrating memory when
@@ -954,7 +960,7 @@ menuconfig CGROUP_SCHED
 	  bandwidth allocation to such task groups. It uses cgroups to group
 	  tasks.
 
-if CGROUP_SCHED && !SCHED_BMQ
+if CGROUP_SCHED && !SCHED_ALT
 config FAIR_GROUP_SCHED
 	bool "Group scheduling for SCHED_OTHER"
 	depends on CGROUP_SCHED
@@ -1226,7 +1232,7 @@ config CHECKPOINT_RESTORE
 
 config SCHED_AUTOGROUP
 	bool "Automatic process group scheduling"
-	depends on !SCHED_BMQ
+	depends on !SCHED_ALT
 	select CGROUPS
 	select CGROUP_SCHED
 	select FAIR_GROUP_SCHED
